@@ -13,7 +13,7 @@ def test_user_can_create_note(author_client, author, form_data):
     """
     Залогиненный пользователь может создать заметку.
     """
-    
+
     url = reverse('notes:add')
     response = author_client.post(url, data=form_data)
     assertRedirects(response, reverse('notes:success'))
@@ -57,7 +57,7 @@ def test_empty_slug(author_client, form_data):
     то он формируется автоматически, с помощью
     функции pytils.translit.slugify.
     """
-    
+
     url = reverse('notes:add')
     form_data.pop('slug')
     response = author_client.post(url, data=form_data)

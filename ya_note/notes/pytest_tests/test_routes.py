@@ -15,7 +15,7 @@ def test_pages_availability_for_anonymous_user(client, name):
     страницы регистрации пользователей, входа в учётную запись и
     выхода из неё доступны всем пользователям.
     """
-    
+
     url = reverse(name)
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
