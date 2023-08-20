@@ -1,6 +1,6 @@
-import pytest
-
 from http import HTTPStatus
+
+import pytest
 from pytest_django.asserts import assertFormError, assertRedirects
 
 from conftest import COMMENT_TEXT, NEW_COMMENT_TEXT
@@ -31,9 +31,8 @@ def test_user_can_create_comment(
 
     response = auth_client.post(news_detail_url, data=form_data)
     assertRedirects(response, f'{news_detail_url}#comments')
-    comments_count = Comment.objects.count()
-    assert comments_count == 1
-    comment = Comment.objects.get()
+    assert Comment.objects.exists()
+    comment = Comment.objects.first()
     assert comment.text == COMMENT_TEXT
     assert comment.news == news
     assert comment.author == user
@@ -52,8 +51,7 @@ def test_user_cant_use_bad_words(auth_client, news_detail_url):
         field='text',
         errors=WARNING
     )
-    comments_count = Comment.objects.count()
-    assert comments_count == 0
+    assert not Comment.objects.exists()
 
 
 def test_author_can_delete_comment(author_client, delete_url, url_to_comments):
@@ -63,8 +61,7 @@ def test_author_can_delete_comment(author_client, delete_url, url_to_comments):
 
     response = author_client.delete(delete_url)
     assertRedirects(response, url_to_comments)
-    comments_count = Comment.objects.count()
-    assert comments_count == 0
+    assert not Comment.objects.exists()
 
 
 def test_user_cant_delete_comment_of_another_user(reader_client, delete_url):
@@ -74,8 +71,8 @@ def test_user_cant_delete_comment_of_another_user(reader_client, delete_url):
 
     response = reader_client.delete(delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
-    comments_count = Comment.objects.count()
-    assert comments_count == 1
+    assert Comment.objects.exists()
+    assert Comment.objects.count() == 1
 
 
 def test_author_can_edit_comment(

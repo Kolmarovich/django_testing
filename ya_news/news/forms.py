@@ -21,7 +21,6 @@ class CommentForm(ModelForm):
         """Не позволяем ругаться в комментариях."""
         text = self.cleaned_data['text']
         lowered_text = text.lower()
-        for word in BAD_WORDS:
-            if word in lowered_text:
-                raise ValidationError(WARNING)
+        if any(word in lowered_text for word in BAD_WORDS):
+            raise ValidationError(WARNING)
         return text

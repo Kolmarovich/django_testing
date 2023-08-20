@@ -96,14 +96,15 @@ def detail_url(news_id_for_args):
 @pytest.fixture
 def set_comments(news, author):
     now = timezone.now()
-    for index in range(2):
-        comment = Comment.objects.create(
+    comments = [
+        Comment(
             news=news,
             author=author,
-            text=f'Tекст {index}',
-        )
-        comment.created = now + timedelta(days=index)
-        comment.save()
+            text=f'Текст {index}',
+            created=now + timedelta(days=index)
+        ) for index in range(2)
+    ]
+    Comment.objects.bulk_create(comments)
 
 
 @pytest.fixture

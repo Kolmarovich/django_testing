@@ -13,8 +13,7 @@ def test_news_count(client, set_news):
 
     response = client.get(HOME_URL)
     object_list = response.context['object_list']
-    news_count = len(object_list)
-    assert news_count == settings.NEWS_COUNT_ON_HOME_PAGE
+    assert len(object_list) == settings.NEWS_COUNT_ON_HOME_PAGE
 
 
 @pytest.mark.django_db
@@ -27,8 +26,7 @@ def test_news_order(client, set_news):
     response = client.get(HOME_URL)
     object_list = response.context['object_list']
     all_dates = [news.date for news in object_list]
-    sorted_dates = sorted(all_dates, reverse=True)
-    assert all_dates == sorted_dates
+    assert all_dates == sorted(all_dates, reverse=True)
 
 
 @pytest.mark.django_db
@@ -40,8 +38,7 @@ def test_comments_order(client, news_id_for_args, set_comments, detail_url):
 
     response = client.get(detail_url)
     assert 'news' in response.context
-    news = response.context['news']
-    all_comments = news.comment_set.all()
+    all_comments = response.context['news'].comment_set.all()
     assert all_comments[0].created < all_comments[1].created
 
 
