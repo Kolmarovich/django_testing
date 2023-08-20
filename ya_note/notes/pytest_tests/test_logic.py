@@ -36,7 +36,7 @@ def test_anonymous_user_cant_create_note(client, form_data):
     login_url = reverse('users:login')
     expected_url = f'{login_url}?next={url}'
     assertRedirects(response, expected_url)
-    assert Note.objects.count() == 0
+    assert not Note.objects.exists()
 
 
 def test_not_unique_slug(author_client, note, form_data):
@@ -104,7 +104,7 @@ def test_author_can_delete_note(author_client, slug_for_args):
     url = reverse('notes:delete', args=slug_for_args)
     response = author_client.post(url)
     assertRedirects(response, reverse('notes:success'))
-    assert Note.objects.count() == 0
+    assert not Note.objects.exists()
 
 
 def test_other_user_cant_delete_note(admin_client, form_data, slug_for_args):

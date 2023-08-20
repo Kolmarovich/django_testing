@@ -32,8 +32,7 @@ class TestNoteCreation(TestCase):
         Анонимный пользователь не может создать заметку.
         """
         self.client.post(self.NOTES_ADD_URL, data=self.form_data)
-        notes_count = Note.objects.count()
-        self.assertEqual(notes_count, 0)
+        assert not Note.objects.exists()
 
     def test_user_can_create_note(self):
         """
@@ -43,10 +42,10 @@ class TestNoteCreation(TestCase):
             self.NOTES_ADD_URL,
             data=self.form_data
         )
-        self.assertRedirects(response, '/done/')
+        self.assertRedirects(response, reverse('notes:success'))
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
-        note = Note.objects.get()
+        note = Note.objects.first()
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
         self.assertEqual(note.author, self.user)
@@ -55,8 +54,7 @@ class TestNoteCreation(TestCase):
         """
         Невозможно создать две заметки с одинаковым slug.
         """
-        notes_quantity = (1, 2)
-        for note in notes_quantity:
+        for note in (1, 2):
             response = self.auth_client.post(
                 self.NOTES_ADD_URL,
                 data=self.form_data
@@ -79,7 +77,7 @@ class TestNoteCreation(TestCase):
         self.auth_client.post(self.NOTES_ADD_URL, data=self.form_data)
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
-        note = Note.objects.get()
+        note = Note.objects.first()
         note_slug = slugify(self.form_data['title'])[:100]
         self.assertEqual(note.slug, note_slug)
 

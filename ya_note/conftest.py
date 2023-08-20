@@ -16,13 +16,12 @@ def author_client(author, client):
 
 @pytest.fixture
 def note(author):
-    note = Note.objects.create(
+    return Note.objects.create(
         title='Заголовок',
         text='Текст заметки',
         slug='note-slug',
         author=author,
     )
-    return note
 
 
 @pytest.fixture
